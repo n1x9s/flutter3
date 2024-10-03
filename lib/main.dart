@@ -23,8 +23,9 @@ class Product {
   final String name;
   final double price;
   final String imageUrl;
+  final String description;
 
-  Product(this.name, this.price, this.imageUrl);
+  Product(this.name, this.price, this.imageUrl, this.description);
 }
 
 class ProductList extends StatefulWidget {
@@ -36,9 +37,9 @@ class ProductList extends StatefulWidget {
 
 class _ProductListState extends State<ProductList> {
   final List<Product> products = [
-    Product('Кот просто прикольный', 29.99, 'images/kot1.jpg'),
-    Product('Кот в шапке', 19.99, 'images/kot2.jpg'),
-    Product('Кот с хлебом', 39.99, 'images/kot3.jpg'),
+    Product('Просто крутой кот', 29.99, 'images/kot1.jpg', 'Самый крутой котик, которого вы когда либо пробовали'),
+    Product('Котик с шапкой', 19.99, 'images/kot2.jpg', 'Котик, после которого у вас снесет шапку'),
+    Product('Котик в хлебе', 39.99, 'images/kot3.jpg', 'Котик, после которого вас пробьет на поесть'),
   ];
 
   final Set<Product> favoriteProducts = {};
@@ -85,8 +86,55 @@ class _ProductListState extends State<ProductList> {
               icon: Icon(isFavorite ? Icons.favorite : Icons.favorite_border),
               onPressed: () => toggleFavorite(product),
             ),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ProductDetail(product: product),
+                ),
+              );
+            },
           );
         },
+      ),
+    );
+  }
+}
+
+class ProductDetail extends StatelessWidget {
+  final Product product;
+
+  const ProductDetail({super.key, required this.product});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(product.name),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Image.asset(product.imageUrl),
+            const SizedBox(height: 16.0),
+            Text(
+              product.name,
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8.0),
+            Text(
+              '\$${product.price}',
+              style: const TextStyle(fontSize: 20, color: Colors.grey),
+            ),
+            const SizedBox(height: 16.0),
+            Text(
+              product.description,
+              style: const TextStyle(fontSize: 16),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -101,7 +149,7 @@ class FavoriteProducts extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Лучшие котики'),
+        title: const Text('Избранные котики'),
       ),
       body: ListView.builder(
         itemCount: favoriteProducts.length,
